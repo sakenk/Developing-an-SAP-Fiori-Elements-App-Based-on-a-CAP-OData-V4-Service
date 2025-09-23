@@ -44,7 +44,7 @@ annotate TravelService.Travel with @UI: {
         to_Customer_CustomerID,
         TravelStatus_code,
         BeginDate,
-        EndDate,
+        EndDate
     ],
     LineItem              : [
         {

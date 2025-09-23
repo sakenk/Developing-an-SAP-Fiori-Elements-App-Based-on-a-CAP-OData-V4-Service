@@ -143,8 +143,7 @@
                                         "route": "TravelObjectPage"
                                     }
                                 }
-                            },
-                            "hideFilterBar": true
+                            }
                         }
                     }
                 },
@@ -192,8 +191,7 @@
                         }
                     }
                 }
-            },
-            "config": {}
+            }
         },
         "contentDensities": {
             "compact": true,
