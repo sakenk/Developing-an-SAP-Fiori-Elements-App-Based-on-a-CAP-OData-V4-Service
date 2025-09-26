@@ -26,7 +26,7 @@ annotate TravelService.Travel with @(Common.SideEffects: {
     Core.OperationAvailable : { $edmJson: { $Ne: [{ $Path: 'in/TravelStatus_code'}, 'A']}},
     Common.SideEffects.TargetProperties : ['in/TravelStatus_code'],
   );
-  deductDiscount @(
+   deductDiscount @(
     Core.OperationAvailable : { $edmJson: { $Eq: [{ $Path: 'in/TravelStatus_code'}, 'O']}}
   );
 }
