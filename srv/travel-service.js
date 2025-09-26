@@ -70,7 +70,7 @@ init() {
     return this._update_totals4 (travel)
   }})
 
-
+  
   /**
    * Update the Travel's TotalPrice when a Supplement's Price is modified.
    */
@@ -80,6 +80,7 @@ init() {
       .from (BookingSupplement.drafts).where({BookSupplUUID:req.data.BookSupplUUID})
     const { travel } = await SELECT.one `to_Travel_TravelUUID as travel` .from (Booking.drafts)
       .where `BookingUUID = ${booking} `
+    await this._update_totals_supplement (booking)
     return this._update_totals4 (travel)
   }})
 
@@ -128,6 +129,15 @@ init() {
   }
 
 
+   /**
+   * Update the Booking's TotalSupplPrice
+   */
+  this._update_totals_supplement = async function (booking) {
+    const { totals } = await SELECT.one `coalesce (sum (Price),0) as totals` .from (BookingSupplement.drafts) .where
+     `to_Booking_BookingUUID = ${booking}`
+    return  UPDATE (Booking.drafts, booking) .with({TotalSupplPrice: totals})
+  }
+
   /**
    * Validate a Travel's edited data before save.
    */
@@ -137,16 +147,17 @@ init() {
     if (BeginDate > EndDate) req.error (400, `Begin Date ${BeginDate} must be before End Date ${EndDate}.`, 'in/BeginDate')
   })
 
-  /**
+/**
    * Calculate the progress of the travel booking.
    */
+
   // Travel is new (0 bookings) = 10%
   // Travel contains at least one booking = 50%
   // Travel contains at least two bookings = 65%
   // Supplement target reached + 5 % per booking, max 90%
   // Travel is accepted = 100% -> see acceptTravel
   // Travel is rejected = 0% -> see rejectTravel
- this.before ('SAVE', 'Travel', async req => {
+  this.before ('SAVE', 'Travel', async req => {
     if (!req.event === 'CREATE' && !req.event === 'UPDATE') return //only calculate if create or update
     let score = 10
     const { TravelUUID } = req.data
@@ -176,7 +187,8 @@ init() {
   this._update_progress = async function (travel, progress){
     return await UPDATE (travel) . with({Progress : progress})
   }
-  
+
+
   this.on ('deductDiscount', async req => {
     let discount = req.data.percent / 100
     let succeeded = await UPDATE (req.subject)

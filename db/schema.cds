@@ -17,8 +17,8 @@ entity Travel : managed {
   BookingFee     : Decimal(16, 3);
   TotalPrice     : Decimal(16, 3) @readonly;
   CurrencyCode   : Currency;
+  Progress       : Integer @readonly;
   Description    : String(1024);
-  Progress : Integer @readonly;
   TravelStatus   : Association to TravelStatus @readonly;
   to_Agency      : Association to TravelAgency;
   to_Customer    : Association to Passenger;
@@ -34,6 +34,7 @@ entity Booking : managed {
   FlightPrice       : Decimal(16, 3);
   CurrencyCode      : Currency;
   BookingStatus     : Association to BookingStatus;
+  TotalSupplPrice : Decimal(16, 3);
   to_BookSupplement : Composition of many BookingSupplement on to_BookSupplement.to_Booking = $self;
   to_Carrier        : Association to Airline;
   to_Customer       : Association to Passenger;
